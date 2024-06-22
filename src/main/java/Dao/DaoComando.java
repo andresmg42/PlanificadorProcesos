@@ -1,0 +1,95 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package Dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import logica.Comando;
+
+/**
+ *
+ * @author andresuv
+ */
+public class DaoComando {
+    Interfaz interfaz;
+    Connection conexion;
+    
+    public DaoComando(){
+    interfaz=new Interfaz();
+    //conexion=interfaz.getConnetion();
+    
+    }
+    
+    public int DaoInsertarComando(Comando c){
+     String insertar_sql="INSERT INTO comando VALUES(?,?,?) ";
+        try {
+         conexion=interfaz.getConnetion();
+         PreparedStatement ptm=conexion.prepareStatement(insertar_sql);
+         ptm.setString(1,c.getComando_id());
+         ptm.setString(2,c.getNombre_imagen());
+         ptm.setString(3,c.getNombre_comando());
+         int result=ptm.executeUpdate();
+         return result;
+         
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }finally{
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return -1;
+    
+    }
+    
+    public Comando DaoBuscarComando(String nombreI){
+    Comando com=new Comando();
+    String sql_buscar="SELECT * FROM comando WHERE nombre_imagen=?";
+        try {
+            conexion=interfaz.getConnetion();
+           PreparedStatement ptm= conexion.prepareStatement(sql_buscar);
+           ptm.setString(1, nombreI);
+           ResultSet result=ptm.executeQuery();
+           while(result.next()){
+           com.setComando_id(nombreI);
+           com.setNombre_imagen(result.getString(2));
+           com.setNombre_imagen(result.getString(3));
+           
+               
+           }
+           return com;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }finally{
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return null;
+    
+    }
+    
+    public static void main(String[] args) {
+        DaoComando dao=new DaoComando();
+        Comando com=new Comando();
+        /*com.setComando_id("33242fds");
+        com.setNombre_imagen("cat");
+        com.setNombre_comando("cat");*/
+        System.out.println(dao.DaoBuscarComando("ls")); 
+        
+    }
+           
+    
+   
+    
+}
