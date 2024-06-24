@@ -9,17 +9,9 @@ package logica;
  * @author andresuv
  */
 public class Comando {
-    private String comando_id;
     private String nombre_imagen;
     private String nombre_comando;
 
-    public String getComando_id() {
-        return comando_id;
-    }
-
-    public void setComando_id(String comando_id) {
-        this.comando_id = comando_id;
-    }
 
     public String getNombre_imagen() {
         return nombre_imagen;

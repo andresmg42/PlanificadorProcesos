@@ -14,18 +14,20 @@ import java.sql.Time;
 public class Ejecucion {
     private int ejecucion_id;
     private int listado_id;
-    private String nombre;
     private String algoritmo;
+    private long tornaroundTimeP;
+    private long responseTimeP;
     private Date fecha;
     private Time Time;
     
     public Ejecucion(){}
 
-    public Ejecucion(int ejecucion_id, int listado_id, String nombre, String algoritmo, Date fecha, Time Time) {
-        this.ejecucion_id = ejecucion_id;
+    public Ejecucion( int listado_id, String algoritmo,long tornaroundTimeP,long responseTimeP,Date fecha, Time Time) {
+      
         this.listado_id = listado_id;
-        this.nombre = nombre;
         this.algoritmo = algoritmo;
+        this.tornaroundTimeP=tornaroundTimeP;
+        this.responseTimeP=responseTimeP;
         this.fecha = fecha;
         this.Time = Time;
     }
@@ -48,13 +50,6 @@ public class Ejecucion {
         this.listado_id = listado_id;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     public String getAlgoritmo() {
         return algoritmo;
@@ -78,6 +73,22 @@ public class Ejecucion {
 
     public void setTime(Time Time) {
         this.Time = Time;
+    }
+
+    public long getTornaroundTimeP() {
+        return tornaroundTimeP;
+    }
+
+    public void setTornaroundTimeP(long tornaroundTimeP) {
+        this.tornaroundTimeP = tornaroundTimeP;
+    }
+
+    public long getResponseTimeP() {
+        return responseTimeP;
+    }
+
+    public void setResponseTimeP(long responseTimeP) {
+        this.responseTimeP = responseTimeP;
     }
     
     

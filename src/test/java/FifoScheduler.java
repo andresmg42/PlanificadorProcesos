@@ -55,7 +55,7 @@ public class FifoScheduler {
    
     }
 
-    public static void main(String[] args) {
+    //public static void main(String[] args) {
         // Crear instancia del planificador FIFO
         FifoScheduler scheduler = new FifoScheduler();
 
@@ -70,5 +70,5 @@ public class FifoScheduler {
 
         // Ejecutar contenedores
         scheduler.ejecutarContenedores();*/
-    }
+   // }
 }

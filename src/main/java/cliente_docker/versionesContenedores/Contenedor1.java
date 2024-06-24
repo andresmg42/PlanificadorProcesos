@@ -35,6 +35,7 @@ public class Contenedor1 {
     DefaultDockerClientConfig clientConfig;
     String nombreI;
     String comando;
+    int contenedor_id;
     long tiempoLlegada;
     long tiempoInicio;
     long tiempoEstimadoReal;
@@ -42,15 +43,15 @@ public class Contenedor1 {
     long tiempoFinal;
     long tornaroundTime;
     long responseTime;
-    String algoritmo;
     long tiempo0;
 
-    public Contenedor1(String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
+    public Contenedor1(int contenedor_id,String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
 
         this.nombreI = nombreI;
         this.comando = comando;
         this.tiempoLlegada = tiempoLlegada;
         this.tiempoEstimadoIngresado = tiempoEstimadoIngresado;
+        this.contenedor_id=contenedor_id;
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
 
@@ -233,13 +234,6 @@ public class Contenedor1 {
         this.tiempoEstimadoIngresado = tiempoEstimadoPromedio;
     }
 
-    public String getAlgoritmo() {
-        return algoritmo;
-    }
-
-    public void setAlgoritmo(String algoritmo) {
-        this.algoritmo = algoritmo;
-    }
 
     public long getTornaroundTime() {
         return tornaroundTime;
@@ -264,6 +258,16 @@ public class Contenedor1 {
     public void setTiempo0(long tiempo0) {
         this.tiempo0 = tiempo0;
     }
+
+    public int getContenedor_id() {
+        return contenedor_id;
+    }
+
+    public void setContenedor_id(int contenedor_id) {
+        this.contenedor_id = contenedor_id;
+    }
+    
+    
 
 //quitar sheduler y 
     public static void main(String[] args) {

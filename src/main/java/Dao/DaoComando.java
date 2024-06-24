@@ -25,13 +25,12 @@ public class DaoComando {
     }
     
     public int DaoInsertarComando(Comando c){
-     String insertar_sql="INSERT INTO comando VALUES(?,?,?) ";
+     String insertar_sql="INSERT INTO comando VALUES(?,?) ";
         try {
          conexion=interfaz.getConnetion();
          PreparedStatement ptm=conexion.prepareStatement(insertar_sql);
-         ptm.setString(1,c.getComando_id());
-         ptm.setString(2,c.getNombre_imagen());
-         ptm.setString(3,c.getNombre_comando());
+         ptm.setString(1,c.getNombre_imagen());
+         ptm.setString(2,c.getNombre_comando());
          int result=ptm.executeUpdate();
          return result;
          
@@ -59,9 +58,9 @@ public class DaoComando {
            ptm.setString(1, nombreI);
            ResultSet result=ptm.executeQuery();
            while(result.next()){
-           com.setComando_id(nombreI);
+        
+           com.setNombre_imagen(result.getString(1));
            com.setNombre_imagen(result.getString(2));
-           com.setNombre_imagen(result.getString(3));
            
                
            }

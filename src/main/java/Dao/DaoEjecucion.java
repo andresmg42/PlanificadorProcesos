@@ -24,15 +24,14 @@ public class DaoEjecucion {
     }
     
     public int DaoInsertarEjecucion(Ejecucion e){
-    String sql_insertar="INSERT INTO ejecucion(listado_id,nombre,algoritmo,fecha,hora) VALUES (?,?,?,?,?)";
+    String sql_insertar="INSERT INTO ejecucion(listado_id,algoritmo,fecha,hora) VALUES (?,?,?,?)";
         try {
             conexion=interfaz.getConnetion();
             PreparedStatement ptm=conexion.prepareStatement(sql_insertar);
             ptm.setInt(1,e.getListado_id());
-            ptm.setString(2,e.getNombre());
-            ptm.setString(3,e.getAlgoritmo());
-            ptm.setDate(4,e.getFecha());
-            ptm.setTime(5,e.getTime());
+            ptm.setString(2,e.getAlgoritmo());
+            ptm.setDate(3,e.getFecha());
+            ptm.setTime(4,e.getTime());
             int result=ptm.executeUpdate();
             return result;
         } catch (SQLException ex) {
@@ -65,6 +64,8 @@ public class DaoEjecucion {
         }
         return null;
     }
+     
     
+     
     
 }
