@@ -11,8 +11,14 @@ package logica;
 public class Comando {
     private String nombre_imagen;
     private String nombre_comando;
+    
+    public Comando(){}
 
-
+    public Comando(String nombre_imagen,String nombre_comando){
+    this.nombre_comando=nombre_comando;
+    this.nombre_imagen=nombre_imagen;
+    }
+    
     public String getNombre_imagen() {
         return nombre_imagen;
     }

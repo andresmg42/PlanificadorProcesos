@@ -19,10 +19,11 @@ public class Listado {
     
     public Listado(){}
 
-    public Listado( String nombre, Date fecha, Time hora) {
+    public Listado( int listado_id,String nombre, Date fecha, Time hora) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.hora = hora;
+        this.listado_id=listado_id;
     }
     
     

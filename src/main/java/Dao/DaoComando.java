@@ -27,7 +27,7 @@ public class DaoComando {
     public int DaoInsertarComando(Comando c){
      String insertar_sql="INSERT INTO comando VALUES(?,?) ";
         try {
-         conexion=interfaz.getConnetion();
+         conexion=interfaz.openConnection();
          PreparedStatement ptm=conexion.prepareStatement(insertar_sql);
          ptm.setString(1,c.getNombre_imagen());
          ptm.setString(2,c.getNombre_comando());
@@ -53,7 +53,7 @@ public class DaoComando {
     Comando com=new Comando();
     String sql_buscar="SELECT * FROM comando WHERE nombre_imagen=?";
         try {
-            conexion=interfaz.getConnetion();
+            conexion=interfaz.openConnection();
            PreparedStatement ptm= conexion.prepareStatement(sql_buscar);
            ptm.setString(1, nombreI);
            ResultSet result=ptm.executeQuery();
@@ -84,7 +84,8 @@ public class DaoComando {
         /*com.setComando_id("33242fds");
         com.setNombre_imagen("cat");
         com.setNombre_comando("cat");*/
-        System.out.println(dao.DaoBuscarComando("ls")); 
+        System.out.println(dao.DaoBuscarComando("sleep2").getNombre_imagen()); 
+        System.out.println(dao.DaoInsertarComando(new Comando("sleep10","sleep 10")));
         
     }
            

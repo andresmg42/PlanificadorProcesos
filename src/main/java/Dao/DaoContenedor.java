@@ -26,13 +26,14 @@ public class DaoContenedor {
     }
 
     public int DaoInsertarContenedor(Contenedor1 c) {
-        String insertar_sql = "INSERT INTO contenedor (nombre_imagen,t_llegada,t_estimado_ingresado) VALUES(?,?,?) ";
+        String insertar_sql = "INSERT INTO contenedor (contenedor_id,nombre_imagen,t_llegada,t_estimado_ingresado) VALUES(?,?,?,?) ";
         try {
             conexion = interfaz.openConnection();
             PreparedStatement ptm = conexion.prepareStatement(insertar_sql);
-            ptm.setString(1, c.getNombreI());
-            ptm.setDouble(2, c.getTiempoLlegada());
-            ptm.setDouble(3, c.getTiempoEstimadoIngresado());
+            ptm.setInt(1, c.getContenedor_id());
+            ptm.setString(2, c.getNombreI());
+            ptm.setDouble(3, c.getTiempoLlegada());
+            ptm.setDouble(4, c.getTiempoEstimadoIngresado());
 
             int result = ptm.executeUpdate();
             return result;
@@ -114,7 +115,7 @@ public class DaoContenedor {
     
         try {
          while(con.next()){
-        Contenedor1 c=new Contenedor1(con.getInt(1),con.getString(2),con.getString(3),con.getLong(4),con.getLong(5));
+        Contenedor1 c=new Contenedor1(con.getInt(1),con.getString(2).trim(),con.getString(3).trim(),con.getLong(4),con.getLong(5));
         listaC.add(c);
     }
     return listaC;
@@ -124,5 +125,62 @@ public class DaoContenedor {
     return null;
     
     }
+     
+    public static void main(String[] args) {
+        DaoContenedor cont=new DaoContenedor();
+        List<Contenedor1> co =cont.DaobtenerConetenedoresListado(1);
+       Contenedor1 cont1 = new Contenedor1(1,"sleep2", "sleep 2",0,2400);
+       Contenedor1 cont2 = new Contenedor1(2,"sleep3", "sleep 3", 1500, 3000);
+       Contenedor1 cont3 = new Contenedor1(3,"sleep4", "sleep 4", 2000, 4000); 
+       
+       List<Contenedor1> conts=new ArrayList<>();
+       conts.add(cont1);
+       conts.add(cont2); 
+       conts.add(cont3); 
+       
+      
+       
+        System.out.println(co.get(0).getNombreI().trim().equals(conts.get(0).getNombreI()));
+        System.out.println(co.get(1).getNombreI().trim().equals(conts.get(1).getNombreI()));
+        System.out.println(co.get(2).getNombreI().trim().equals(conts.get(2).getNombreI()));
+        
+        System.out.println("co: "+co.get(1).getNombreI()+" conts: "+conts.get(1).getNombreI());
+        
+    }
+     
+    /*public static void main(String[] args) {
+    DaoContenedor cont = new DaoContenedor();
+    List<Contenedor1> co = cont.DaobtenerConetenedoresListado(1);
+    Contenedor1 cont1 = new Contenedor1(1, "sleep2", "sleep 2", 0, 2400);
+    Contenedor1 cont2 = new Contenedor1(2, "sleep3", "sleep 3", 1500, 3000);
+    Contenedor1 cont3 = new Contenedor1(3, "sleep4", "sleep 4", 2000, 4000);
 
+    List<Contenedor1> conts = new ArrayList<>();
+    conts.add(cont1);
+    conts.add(cont2);
+    conts.add(cont3);
+
+    for (int i = 0; i < co.size(); i++) {
+        String fromDb = co.get(i).getNombreI();
+        String manual = conts.get(i).getNombreI();
+
+        System.out.println("Comparing: co[" + i + "] = " + fromDb + " | conts[" + i + "] = " + manual);
+        System.out.println("Length: " + fromDb.length() + " | " + manual.length());
+
+        System.out.print("co[" + i + "] ASCII: ");
+        for (char c : fromDb.toCharArray()) {
+            System.out.print((int) c + " ");
+        }
+        System.out.println();
+
+        System.out.print("conts[" + i + "] ASCII: ");
+        for (char c : manual.toCharArray()) {
+            System.out.print((int) c + " ");
+        }
+        System.out.println();
+
+        System.out.println("Equals: " + fromDb.equals(manual));
+    }*/
+
+     
 }

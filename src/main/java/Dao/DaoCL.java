@@ -20,14 +20,14 @@ public class DaoCL {
         interfaz = new Interfaz();        
     }
     
-    public int DaoinsertarCL(String comando, int listado_id){
+    public int DaoinsertarCL(int contenedor_id, int listado_id){
         String insertar = "INSERT INTO c_l (contenedor_id,listado_id) VALUES(?,?)";
         
         try{
             conexion = interfaz.openConnection();
             PreparedStatement ptm = conexion.prepareStatement(insertar);
                 
-                ptm.setString(1, comando);
+                ptm.setInt(1, contenedor_id);
                 ptm.setInt(2, listado_id);
                 
                 return ptm.executeUpdate();
@@ -44,5 +44,10 @@ public class DaoCL {
             }
         }
         return -1;
+    }
+    
+    public static void main(String[] args) {
+       
+        
     }
 }

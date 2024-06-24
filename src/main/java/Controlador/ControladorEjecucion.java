@@ -26,6 +26,7 @@ public class ControladorEjecucion {
     
     ControladorEjecucion(){
     daoE=new DaoEjecucion();
+    daoC=new DaoContenedor();
     }
     
     public int insertarEjecucion(int listado_id,String algoritmo, long tornaroundTimeP,long responseTimeP,Date fecha,Time hora){
@@ -62,11 +63,12 @@ public class ControladorEjecucion {
     
     public String EjecutarAlgoritmo(String nombreAlgoritmo,int listado_id){
     List<Contenedor1> conts=daoC.DaobtenerConetenedoresListado(listado_id);
+
     switch (nombreAlgoritmo) {
     case "fifo":
         fifo=new FifoScheduler1(conts);
         fifo.ejecutarContenedores();
-       //List<Contenedor1> contenedoresProcesados=fifo.getContenedores();
+      
         for(Contenedor1 c:conts){
         int actualizarC=daoC.DaoActualizarContenedor(c);
             System.out.println("resultado de ActualizarContenedor: "+actualizarC);
@@ -74,7 +76,8 @@ public class ControladorEjecucion {
         }
         
         Object[] fechaHora=fechaHoraActual();
-        int crearEjecucion=insertarEjecucion(listado_id,"FIFO",fifo.getTornaroundTimeP(),fifo.getResponseTimeP(),(Date)fechaHora[1],(Time)fechaHora[2]);
+        int crearEjecucion=insertarEjecucion(listado_id,"FIFO",fifo.getTornaroundTimeP(),fifo.getResponseTimeP(),(Date)fechaHora[0],(Time)fechaHora[1]);
+        System.out.println("resultado crearEjecucion: "+crearEjecucion);
         
         
         
@@ -88,11 +91,18 @@ public class ControladorEjecucion {
         // código a ejecutar si ninguno de los casos anteriores coincide
         return null;
 
+    
+    
     }
     
-    
-    
   
+    }
+    
+    public static void main(String[] args) {
+        ControladorEjecucion cont=new ControladorEjecucion();
+        System.out.println(cont.EjecutarAlgoritmo("fifo", 1));
+        
+        
     }
     
     

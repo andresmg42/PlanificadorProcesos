@@ -112,7 +112,7 @@ public class FifoScheduler1 {
         tornaroundTimeP = totalTornaroundTime / count;
         responseTimeP = totalResponseTime / count;
         resultadoE+="TornaroundTimePromedio: "+totalTornaroundTime/count+"\n";
-        resultadoE+="ResponseTimePromedio: "+totalResponseTime/count+"\n";
+        resultadoE+="ResponseTimePromedio: "+totalResponseTime/count+"\n\n";
       
     }
 
@@ -120,7 +120,7 @@ public class FifoScheduler1 {
         
         // Crear instancia del planificador FIFO
        Contenedor1 cont1 = new Contenedor1(1,"sleep2", "sleep 2",0,2400);
-       Contenedor1 cont2 = new Contenedor1(2,"sleep3", "sleep3", 1500, 3000);
+       Contenedor1 cont2 = new Contenedor1(2,"sleep3", "sleep 3", 1500, 3000);
        Contenedor1 cont3 = new Contenedor1(3,"sleep4", "sleep 4", 2000, 4000); 
        
        List<Contenedor1> conts=new ArrayList<>();

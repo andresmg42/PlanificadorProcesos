@@ -17,7 +17,18 @@ public class ControladorCL {
     DaoCL daoCL = new DaoCL();
     
     //METODOS
-    public int insertarCL(String comando, int listado_id){
+    public int insertarCL(int comando, int listado_id){
         return daoCL.DaoinsertarCL(comando, listado_id);
+    }
+    
+    public static void main(String[] args) {
+        ControladorCL cl=new ControladorCL();
+        
+        
+        cl.insertarCL(1,1 );
+        
+        cl.insertarCL(2,1);
+        
+        cl.insertarCL(3,1 );
     }
 }

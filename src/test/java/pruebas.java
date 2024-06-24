@@ -16,7 +16,7 @@ public class pruebas {
     }
 
     public static void main(String[] args) {
-        pruebas prueba = new pruebas();
-        prueba.FechaHoraActual();  // Llama a la función para mostrar la fecha y hora actuales
+      String p="sleep 4";
+        System.out.println(p.trim());// Llama a la función para mostrar la fecha y hora actuales
     }
 }

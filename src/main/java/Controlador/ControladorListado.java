@@ -3,41 +3,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Controlador;
+
 import Dao.DaoListado;
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logica.Listado;
+
 /**
  *
  * @author Jose Daniel
  */
 public class ControladorListado {
-    
 
-    public ControladorListado(){}
-    
+    public ControladorListado() {
+    }
+
     //OBJETOS DE OTRAS CLASES
     DaoListado daoListado = new DaoListado();
-    
-    public ResultSet listarListados(){
+
+    public ResultSet listarListados() {
         return daoListado.DaolistarListado();
     }
-    
-    public int insertarListado(Listado listado){
-        int prueba = daoListado.DaoInsertarListado(listado);         
-        return prueba;
-    }
-    
-    public static void main(String[] args) {
-        Listado l=new Listado("listadoPP",Date.valueOf("2024-06-19"),Time.valueOf("20:54:00"));
-        ControladorListado con = new ControladorListado();
+
+    public int insertarListado(int id_listado,String nombre,Date fecha,Time hora) {
+        Listado l=new Listado(id_listado,nombre,fecha,hora);
+         return daoListado.DaoInsertarListado(l);
         
-            con.insertarListado(l);
+    }
+
+    public static void main(String[] args) {
+        
+        ControladorListado con = new ControladorListado();
+
+        int res=con.insertarListado(1,"listadoPP", Date.valueOf("2024-06-19"), Time.valueOf("20:54:00"));
+        System.out.println(res);
 
     }
 }

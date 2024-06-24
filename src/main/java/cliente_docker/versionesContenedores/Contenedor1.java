@@ -56,6 +56,7 @@ public class Contenedor1 {
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
 
     }
+    
 
     public String crearImagen() {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
@@ -90,7 +91,7 @@ public class Contenedor1 {
                 Logger.getLogger(Contenedor1.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return "-1";
+        return null;
 
     }
 
@@ -98,7 +99,6 @@ public class Contenedor1 {
         final StringBuilder retorno = new StringBuilder();
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         Image image = verificarImagen();
-
         CreateContainerResponse container = client.createContainerCmd(image.getId()).exec();
         if (this.tiempoLlegada == 0) {
             tiempo0 = System.currentTimeMillis();

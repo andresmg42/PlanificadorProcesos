@@ -27,13 +27,14 @@ public class DaoListado {
     }
     
     public int DaoInsertarListado(Listado l){
-    String sql_insertar="INSERT INTO listado(nombre,fecha,hora) VALUES(?,?,?)";
+    String sql_insertar="INSERT INTO listado(listado_id,nombre,fecha,hora) VALUES(?,?,?,?)";
         try {
             conexion=interfaz.getConnetion();
             PreparedStatement ptm=conexion.prepareStatement(sql_insertar);
-            ptm.setString(1,l.getNombre());
-            ptm.setDate(2,l.getFecha());
-            ptm.setTime(3,l.getHora());
+            ptm.setInt(1, l.getListado_id());
+            ptm.setString(2,l.getNombre());
+            ptm.setDate(3,l.getFecha());
+            ptm.setTime(4,l.getHora());
             int result=ptm.executeUpdate();
             return result;
         } catch (SQLException e) {
@@ -98,10 +99,10 @@ public class DaoListado {
 
     
     public static void main(String[] args) {
-        //Listado l=new Listado("listadoP",Date.valueOf("2024-06-19"),Time.valueOf("20:54:00"));
+        /*Listado l=new Listado(1,"listadoP",Date.valueOf("2024-06-19"),Time.valueOf("20:54:00"));
         DaoListado dao =new DaoListado();
-        //System.out.println(dao.DaoInsertarListado(l));
-        System.out.println(dao.DaoEliminarListado(1));
+        System.out.println(dao.DaoInsertarListado(l));
+        System.out.println(dao.DaoEliminarListado(2));*/
         
         
        
