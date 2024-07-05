@@ -25,10 +25,12 @@ public class ControladorCL {
         ControladorCL cl=new ControladorCL();
         
         
-        cl.insertarCL(1,1 );
+        cl.insertarCL(5,2 );
         
-        cl.insertarCL(2,1);
+        cl.insertarCL(4,2);
         
-        cl.insertarCL(3,1 );
+        cl.insertarCL(6,2 );
+        
+        cl.insertarCL(7,2 );
     }
 }

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Contenedor1 {
+public class Contenedor1 implements Comparable<Contenedor1>{
 
     DefaultDockerClientConfig clientConfig;
     String nombreI;
@@ -44,19 +44,26 @@ public class Contenedor1 {
     long tornaroundTime;
     long responseTime;
     long tiempo0;
+    long tiempoRestante;
+    String containerId;
 
-    public Contenedor1(int contenedor_id,String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
+    public Contenedor1(int contenedor_id, String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
 
         this.nombreI = nombreI;
         this.comando = comando;
         this.tiempoLlegada = tiempoLlegada;
         this.tiempoEstimadoIngresado = tiempoEstimadoIngresado;
-        this.contenedor_id=contenedor_id;
+        this.tiempoRestante = tiempoEstimadoIngresado;
+        this.contenedor_id = contenedor_id;
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
 
     }
     
+   @Override
+    public int compareTo(Contenedor1 t) {
+        return Long.compare(this.tiempoRestante, t.tiempoRestante);
+    }
 
     public String crearImagen() {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
@@ -100,12 +107,9 @@ public class Contenedor1 {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         Image image = verificarImagen();
         CreateContainerResponse container = client.createContainerCmd(image.getId()).exec();
-        if (this.tiempoLlegada == 0) {
-            tiempo0 = System.currentTimeMillis();
-        }
-        this.tiempoInicio = System.currentTimeMillis() - tiempo0;
-
+        //this.containerId=container.getId();
         client.startContainerCmd(container.getId()).exec();
+
         LogContainerResultCallback callback = new LogContainerResultCallback() {
             @Override
             public void onNext(Frame item) {
@@ -116,6 +120,12 @@ public class Contenedor1 {
         };
 
         try {
+            if (this.tiempoLlegada == 0) {
+                tiempo0 = System.nanoTime();
+            }
+            this.tiempoInicio =( System.nanoTime()- tiempo0)/1000000000;
+
+        
             client.logContainerCmd(container.getId())
                     .withStdOut(true)
                     .withStdErr(true)
@@ -123,7 +133,9 @@ public class Contenedor1 {
                     .awaitCompletion();
             client.waitContainerCmd(container.getId()).exec(new WaitContainerResultCallback()).awaitCompletion();
 
-            this.tiempoFinal = System.currentTimeMillis() - tiempo0;
+            
+
+            this.tiempoFinal = (System.nanoTime()- tiempo0)/1000000000;
             this.tiempoEstimadoReal = this.tiempoFinal - this.tiempoInicio;
             this.tornaroundTime = this.tiempoFinal - this.tiempoLlegada;
             this.responseTime = this.tiempoInicio - tiempoLlegada;
@@ -234,7 +246,6 @@ public class Contenedor1 {
         this.tiempoEstimadoIngresado = tiempoEstimadoPromedio;
     }
 
-
     public long getTornaroundTime() {
         return tornaroundTime;
     }
@@ -266,23 +277,33 @@ public class Contenedor1 {
     public void setContenedor_id(int contenedor_id) {
         this.contenedor_id = contenedor_id;
     }
+
+    public long getTiempoRestante() {
+        return tiempoRestante;
+    }
+
+    public void setTiempoRestante(long tiempoRestante) {
+        this.tiempoRestante = tiempoRestante;
+    }
+
+    public String getContainerId() {
+        return containerId;
+    }
+
+    public void setContainerId(String containerId) {
+        this.containerId = containerId;
+    }
+    
     
     
 
 //quitar sheduler y 
     public static void main(String[] args) {
-        //Contenedor cont = new Contenedor("sleep1", "sleep 1",0,1400);
-
-        //System.out.println(cont.ejecutarContenedor());
-        //System.out.println(cont.verificarImagen());
-
-        /*if(cont.verificarImagen().getId()==null){
-            System.out.println(cont.crearImagen());
-        }
-       
-        System.out.println(cont.crearContenedor());*/
-        // System.out.println(cont.ejecutarContenedor());
-        //System.out.println(cont.getTiempoEstimadoReal());
+        Contenedor1 cont = new Contenedor1(15, "sleep4", "sleep 4", 0,4);
+        cont.ejecutarContenedor();
+        System.out.println(cont.getTiempoEstimadoReal());
     }
+
+    
 
 }

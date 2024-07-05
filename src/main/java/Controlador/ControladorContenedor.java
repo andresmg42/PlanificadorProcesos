@@ -37,9 +37,12 @@ public class ControladorContenedor {
     
     public static void main(String[] args) {
         ControladorContenedor cont=new ControladorContenedor();
-        System.out.println(cont.insertarContenedor(1,"sleep2", "sleep 2",0,2400));
-        System.out.println(cont.insertarContenedor(2,"sleep3", "sleep 3", 1500, 3000));
-        System.out.println(cont.insertarContenedor(3,"sleep4", "sleep 4", 2000, 4000));
+        
+        System.out.println(cont.insertarContenedor(5,"sleep6", "sleep 6", 2, 6));
+        System.out.println(cont.insertarContenedor(4,"sleep4", "sleep 4", 1, 4));
+        System.out.println(cont.insertarContenedor(6,"sleep1", "sleep 1",0,1));
+        System.out.println(cont.insertarContenedor(7,"sleep2", "sleep 2",3,2));
+        
         
     }
     

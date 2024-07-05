@@ -26,17 +26,17 @@ public class ControladorListado {
         return daoListado.DaolistarListado();
     }
 
-    public int insertarListado(int id_listado,String nombre,Date fecha,Time hora) {
-        Listado l=new Listado(id_listado,nombre,fecha,hora);
-         return daoListado.DaoInsertarListado(l);
-        
+    public int insertarListado(int id_listado, String nombre, Date fecha, Time hora) {
+        Listado l = new Listado(id_listado, nombre, fecha, hora);
+        return daoListado.DaoInsertarListado(l);
+
     }
 
     public static void main(String[] args) {
-        
+
         ControladorListado con = new ControladorListado();
 
-        int res=con.insertarListado(1,"listadoPP", Date.valueOf("2024-06-19"), Time.valueOf("20:54:00"));
+        int res = con.insertarListado(2, "lPRUEBA", Date.valueOf("2024-06-19"), Time.valueOf("20:54:00"));
         System.out.println(res);
 
     }

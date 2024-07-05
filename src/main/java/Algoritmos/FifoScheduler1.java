@@ -102,7 +102,7 @@ public class FifoScheduler1 {
             
             resultadoE+="TornaroundTime: "+contenedor.getTornaroundTime()+"\n";
             
-            resultadoE+="ResponseTime: "+contenedor.getResponseTime()+"\n";
+            resultadoE+="ResponseTime: "+contenedor.getResponseTime()+"\n\n";
             
             totalResponseTime += contenedor.getResponseTime();
             totalTornaroundTime += contenedor.getTornaroundTime();

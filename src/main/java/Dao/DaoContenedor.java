@@ -5,6 +5,7 @@
 package Dao;
 
 import cliente_docker.versionesContenedores.Contenedor1;
+import cliente_docker.versionesContenedores.Contenedor3;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -83,6 +84,37 @@ public class DaoContenedor {
         return -1;
 
     }
+    
+    public int DaoActualizarContenedor3(Contenedor3 c) {
+        String actualizar_sql = "UPDATE contenedor SET t_inicial=?, t_real_estimado=?,t_final=?,t_turnaround_time=?,t_respose_time=? WHERE contenedor_id=?";
+
+        try {
+            conexion = interfaz.openConnection();
+            PreparedStatement ptm = conexion.prepareStatement(actualizar_sql);
+            ptm.setDouble(1, c.getTiempoInicio());
+            ptm.setDouble(2, c.getTiempoEstimadoReal());
+            ptm.setDouble(3, c.getTiempoFinal());
+            ptm.setDouble(4, c.getTornaroundTime());
+            ptm.setDouble(5, c.getResponseTime());
+            ptm.setInt(6, c.getContenedor_id());
+
+            int result = ptm.executeUpdate();
+            return result;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return -1;
+
+    }
 
     public ResultSet DaoListarContenedores(int listado_id) {
         String sql_listar = "SELECT cont.contenedor_id,com.nombre_imagen,com.nombre_comando,cont.t_llegada,cont.t_estimado_ingresado\n"
@@ -125,6 +157,25 @@ public class DaoContenedor {
     return null;
     
     }
+     
+    public List<Contenedor3> DaobtenerConetenedoresListado3(int listado_id) {
+    List<Contenedor3> listaC=new ArrayList<>();
+    ResultSet con=DaoListarContenedores(listado_id);
+    
+        try {
+         while(con.next()){
+        Contenedor3 c = new Contenedor3(con.getInt(1),con.getString(2).trim(),con.getString(3).trim(),con.getInt(4),con.getInt(5));
+        listaC.add(c);
+    }
+    return listaC;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    return null;
+    
+    }
+     
+   
      
     public static void main(String[] args) {
         DaoContenedor cont=new DaoContenedor();
