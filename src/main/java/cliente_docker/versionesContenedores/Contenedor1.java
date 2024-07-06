@@ -46,6 +46,8 @@ public class Contenedor1 implements Comparable<Contenedor1>{
     long tiempo0;
     long tiempoRestante;
     String containerId;
+    String comparador;
+    double NTAT;
 
     public Contenedor1(int contenedor_id, String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
 
@@ -55,6 +57,8 @@ public class Contenedor1 implements Comparable<Contenedor1>{
         this.tiempoEstimadoIngresado = tiempoEstimadoIngresado;
         this.tiempoRestante = tiempoEstimadoIngresado;
         this.contenedor_id = contenedor_id;
+        this.NTAT= 0.0;
+        
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
 
@@ -62,7 +66,15 @@ public class Contenedor1 implements Comparable<Contenedor1>{
     
    @Override
     public int compareTo(Contenedor1 t) {
+        if(comparador.equals("SRT")){
         return Long.compare(this.tiempoRestante, t.tiempoRestante);
+        }else if(comparador.equals("SPN")){
+        return Long.compare(this.tiempoEstimadoIngresado, t.tiempoEstimadoIngresado);
+        }else if(comparador.equals("HRRN")){
+        return Double.compare(this.NTAT,t.NTAT);
+        }
+        return -1;
+        
     }
 
     public String crearImagen() {
@@ -293,6 +305,23 @@ public class Contenedor1 implements Comparable<Contenedor1>{
     public void setContainerId(String containerId) {
         this.containerId = containerId;
     }
+
+    public String getComparador() {
+        return comparador;
+    }
+
+    public void setComparador(String comparador) {
+        this.comparador = comparador;
+    }
+
+    public double getNTAT() {
+        return NTAT;
+    }
+
+    public void setNTAT(double NTAT) {
+        this.NTAT = NTAT;
+    }
+    
     
     
     

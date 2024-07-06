@@ -85,7 +85,7 @@ public class DaoContenedor {
 
     }
     
-    public int DaoActualizarContenedor3(Contenedor3 c) {
+    /*public int DaoActualizarContenedor3(Contenedor3 c) {
         String actualizar_sql = "UPDATE contenedor SET t_inicial=?, t_real_estimado=?,t_final=?,t_turnaround_time=?,t_respose_time=? WHERE contenedor_id=?";
 
         try {
@@ -114,7 +114,7 @@ public class DaoContenedor {
         }
         return -1;
 
-    }
+    }*/
 
     public ResultSet DaoListarContenedores(int listado_id) {
         String sql_listar = "SELECT cont.contenedor_id,com.nombre_imagen,com.nombre_comando,cont.t_llegada,cont.t_estimado_ingresado\n"
@@ -158,7 +158,7 @@ public class DaoContenedor {
     
     }
      
-    public List<Contenedor3> DaobtenerConetenedoresListado3(int listado_id) {
+    /*public List<Contenedor3> DaobtenerConetenedoresListado3(int listado_id) {
     List<Contenedor3> listaC=new ArrayList<>();
     ResultSet con=DaoListarContenedores(listado_id);
     
@@ -173,7 +173,7 @@ public class DaoContenedor {
         }
     return null;
     
-    }
+    }*/
      
    
      

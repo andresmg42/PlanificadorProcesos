@@ -19,11 +19,14 @@ import java.io.IOException;
 
 import java.util.PriorityQueue;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SRT {
+public class HRRN {
 
     private List<Contenedor1> containers;
     private List<Contenedor1> contenedoresCompletos;
@@ -37,25 +40,25 @@ public class SRT {
     private long totalTurnaroundTime;
     DefaultDockerClientConfig clientConfig;
 
-    public SRT(List<Contenedor1> conts) {
+    public HRRN(List<Contenedor1> conts) {
         containers = new ArrayList<>();
         contenedoresCompletos = new ArrayList<>();
-        readyQueue = new PriorityQueue<>();
+        readyQueue = new PriorityQueue<>(Comparator.reverseOrder());
         currentTime = 0;
-        this.containers=conts;
+        this.containers = conts;
         dockerClient = DockerClientBuilder.getInstance().build();
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
         resultado = "\n\n---------------------estos son los resultados---------------------\n\n";
         configurarComparador();
     }
 
-    public void addContainer(int contenedorId, String nombreI,String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
-        containers.add(new Contenedor1(contenedorId, nombreI,comando, tiempoLlegada, tiempoEstimadoIngresado));
+    public void addContainer(int contenedorId, String nombreI, String comando, long tiempoLlegada, long tiempoEstimadoIngresado) {
+        containers.add(new Contenedor1(contenedorId, nombreI, comando, tiempoLlegada, tiempoEstimadoIngresado));
     }
-    
-     public void configurarComparador() {
+
+    public void configurarComparador() {
         for (Contenedor1 cont : containers) {
-            cont.setComparador("SRT");
+            cont.setComparador("HRRN");
         }
     }
 
@@ -68,7 +71,7 @@ public class SRT {
             // Build image
             String imageId = dockerClient.buildImageCmd(baseDir)
                     .withDockerfile(dockerfile)
-                    .withBuildArg("VECTOR",cont.getComando())
+                    .withBuildArg("VECTOR", cont.getComando())
                     .withTag(cont.getNombreI())
                     .exec(new BuildImageResultCallback() {
                         @Override
@@ -131,16 +134,11 @@ public class SRT {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         Image image = verificarImagen(cont);
         CreateContainerResponse container = client.createContainerCmd(image.getId()).withHostConfig(HostConfig.newHostConfig().withAutoRemove(true))
-            .exec();
+                .exec();
         cont.setContainerId(container.getId());
 
         client.startContainerCmd(container.getId()).exec();
 
-        
-
-        
-
-        
         return retorno.toString();
     }
 
@@ -149,9 +147,9 @@ public class SRT {
             container.setTiempoInicio(currentTime);
             container.setResponseTime(currentTime - container.getTiempoLlegada());
         }
-       
-        Contenedor1 cont=new Contenedor1(container.getContenedor_id(),container.getNombreI(),container.getComando(),container.getTiempoLlegada(),container.getTiempoRestante());
-        
+
+        Contenedor1 cont = new Contenedor1(container.getContenedor_id(), container.getNombreI(), container.getComando(), container.getTiempoLlegada(), container.getTiempoRestante());
+
         ejecutarContenedor(cont);
         container.setContainerId(cont.getContainerId());
         System.out.println("Tiempo " + currentTime + ": Iniciando contenedor " + container.getNombreI());
@@ -162,8 +160,48 @@ public class SRT {
         System.out.println("Tiempo " + currentTime + ": Deteniendo contenedor " + container.getNombreI());
     }
 
+    /*public void actualizarNTAT(PriorityQueue<Contenedor1> readyQueue){
+   
+    Iterator it=readyQueue.iterator();
+    while(it.hasNext()){
+        Contenedor1 cont =(Contenedor1) it.next();
+        cont.setNTAT(this.currentTime- cont.getTiempoLlegada()/cont.getTiempoEstimadoIngresado());
+    
+    }
+    
+    }*/
+    public void actualizarNTAT() {
+      PriorityQueue<Contenedor1> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+      
+        
+       for(Contenedor1 cont: this.readyQueue){
+        double ntat = (double) (this.currentTime - cont.getTiempoLlegada()) / cont.getTiempoEstimadoIngresado();
+        cont.setNTAT(ntat);
+        maxHeap.offer(cont);
+        }
+        readyQueue=maxHeap;
+       
+    }
+    
+    /*public void invertirQueue(){
+        PriorityQueue<Contenedor1> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+        for(Contenedor1 cont:this.readyQueue){
+            maxHeap.offer(cont);
+        
+        }
+        
+        readyQueue=maxHeap;
+        
+        
+    
+        // Agregar elementos
+        
+
+    }*/
+
+   
+
     public String runScheduler() {
-        containers.sort((a, b) -> Long.compare(a.getTiempoLlegada(), b.getTiempoLlegada()));
 
         int completedContainers = 0;
         Contenedor1 currentContainer = null;
@@ -174,16 +212,16 @@ public class SRT {
                 readyQueue.offer(containers.remove(0));
             }
 
-            // Si hay un contenedor en ejecución, comprueba si debe ser preemptado
-            if (currentContainer != null && !readyQueue.isEmpty()
-                    && readyQueue.peek().getTiempoRestante() < currentContainer.getTiempoRestante()) {
-                stopContainer(currentContainer);
-                readyQueue.offer(currentContainer);
-                currentContainer = null;
-            }
-
             // Si no hay contenedor en ejecución, toma uno de la cola de listos
             if (currentContainer == null && !readyQueue.isEmpty()) {
+                
+                actualizarNTAT();
+               //invertirQueue();
+                
+                for(Contenedor1 cont:readyQueue){
+                    System.out.println("contenedor: "+cont.getNombreI()+"con NTAT: "+cont.getNTAT());
+                
+                }
                 currentContainer = readyQueue.poll();
                 startContainer(currentContainer);
             }
@@ -196,7 +234,7 @@ public class SRT {
                 // Si el contenedor ha terminado
                 if (currentContainer.getTiempoRestante() == 0) {
                     currentContainer.setTiempoFinal(currentTime);
-                    currentContainer.setTornaroundTime(this.currentTime-currentContainer.getTiempoLlegada());
+                    currentContainer.setTornaroundTime(this.currentTime - currentContainer.getTiempoLlegada());
                     System.out.println("Tiempo " + this.currentTime + ": Contenedor " + currentContainer.getNombreI() + " completado");
                     totalTurnaroundTime += currentContainer.getTornaroundTime();
                     totalResponseTime += currentContainer.getResponseTime();
@@ -222,8 +260,8 @@ public class SRT {
 
         this.tornaroundTimeP = this.totalTurnaroundTime / this.contenedoresCompletos.size();
         this.responseTimeP = this.totalResponseTime / this.contenedoresCompletos.size();
-        resultado += "turnaroundTime promedio: " + this.tornaroundTimeP+"\n\n";
-        resultado += "respnseTIme promedio: " + this.responseTimeP+"\n\n";
+        resultado += "turnaroundTime promedio: " + this.tornaroundTimeP + "\n\n";
+        resultado += "respnseTIme promedio: " + this.responseTimeP + "\n\n";
 
         return resultado;
 
@@ -246,32 +284,29 @@ public class SRT {
     }
 
     public static void main(String[] args) {
-        
-        List<Contenedor1> conts=new ArrayList<>();
-        
-        Contenedor1 cont1=new Contenedor1(1,"sleep3","sleep 3",0,3);
-        Contenedor1 cont2=new Contenedor1(1,"sleep6","sleep 6",2,6);
-        Contenedor1 cont3=new Contenedor1(1,"sleep4","sleep 4",4,4);
-        Contenedor1 cont4=new Contenedor1(1,"sleep5","sleep 5",6,5);
-        Contenedor1 cont5=new Contenedor1(1,"sleep2","sleep 2",8,2);
-        
+
+        List<Contenedor1> conts = new ArrayList<>();
+
+        Contenedor1 cont1 = new Contenedor1(1, "sleep3", "sleep 3", 0, 3);
+        Contenedor1 cont2 = new Contenedor1(1, "sleep6", "sleep 6", 2, 6);
+        Contenedor1 cont3 = new Contenedor1(1, "sleep4", "sleep 4", 4, 4);
+        Contenedor1 cont4 = new Contenedor1(1, "sleep5", "sleep 5", 6, 5);
+        Contenedor1 cont5 = new Contenedor1(1, "sleep2", "sleep 2", 8, 2);
+
         conts.add(cont1);
         conts.add(cont2);
         conts.add(cont3);
         conts.add(cont4);
         conts.add(cont5);
-        
-        SRT srt = new SRT(conts);
-        
-        
+
+        HRRN snp = new HRRN(conts);
 
         /*srt.addContainer(1, "sleep3","sleep 3", 0, 3);
         srt.addContainer(2, "sleep6","sleep 6", 2, 6);
         srt.addContainer(3, "sleep4","sleep 4", 4, 4);
         srt.addContainer(4, "sleep5","sleep 5", 6, 5);
         srt.addContainer(5, "sleep2","sleep 2", 8, 2);*/
-
-        System.out.println(srt.runScheduler());
+        System.out.println(snp.runScheduler());
 
     }
 }
