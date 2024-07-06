@@ -190,6 +190,11 @@ public class SRT {
 
             // Simular la ejecución por una unidad de tiempo
             if (currentContainer != null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SRT.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 currentContainer.setTiempoRestante(currentContainer.getTiempoRestante() - 1);
                 currentTime++;
 

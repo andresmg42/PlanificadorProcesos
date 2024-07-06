@@ -20,6 +20,7 @@
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/Controlador/ControladorCL.java
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/logica/Listado.java
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/Algoritmos/SRT.java
+/home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/Algoritmos/FIFO.java
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/Dao/DaoCL.java
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/SRTNScheduler.java
 /home/andresuv/NetBeansProjects/PlanificadorProcesos/src/main/java/Algoritmos/RoundRobinCorregido.java

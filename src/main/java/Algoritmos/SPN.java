@@ -178,6 +178,11 @@ public class SPN {
 
             // Simular la ejecución por una unidad de tiempo
             if (currentContainer != null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SPN.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 currentContainer.setTiempoRestante(currentContainer.getTiempoRestante() - 1);
                 currentTime++;
 

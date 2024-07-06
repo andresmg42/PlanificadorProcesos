@@ -216,18 +216,17 @@ public class HRRN {
             if (currentContainer == null && !readyQueue.isEmpty()) {
                 
                 actualizarNTAT();
-               //invertirQueue();
-                
-                for(Contenedor1 cont:readyQueue){
-                    System.out.println("contenedor: "+cont.getNombreI()+"con NTAT: "+cont.getNTAT());
-                
-                }
                 currentContainer = readyQueue.poll();
                 startContainer(currentContainer);
             }
 
             // Simular la ejecución por una unidad de tiempo
             if (currentContainer != null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(HRRN.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 currentContainer.setTiempoRestante(currentContainer.getTiempoRestante() - 1);
                 currentTime++;
 

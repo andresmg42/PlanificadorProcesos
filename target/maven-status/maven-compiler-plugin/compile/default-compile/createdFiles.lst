@@ -13,6 +13,7 @@ Algoritmos/RoundRobinCorregido.class
 Controlador/ControladorListado.class
 Algoritmos/SRTNS.class
 Dao/DaoEjecucion.class
+Algoritmos/FIFO$1.class
 Algoritmos/SRT.class
 cliente_docker/versionesContenedores/Contenedor4.class
 DockerContainer.class
@@ -29,6 +30,7 @@ Algoritmos/HRRN$1.class
 Dao/DaoListado.class
 Algoritmos/RoundRobinCorregido$1.class
 Algoritmos/RoundRobin.class
+Algoritmos/FIFO.class
 Algoritmos/RoundRobin$1.class
 logica/Ejecucion.class
 Controlador/ControladorContenedor.class

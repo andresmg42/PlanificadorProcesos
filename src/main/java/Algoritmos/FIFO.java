@@ -19,7 +19,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RoundRobin {
+public class FIFO {
 
     private Queue<Contenedor1> contenedorQueue;
     long tiempo0;
@@ -32,11 +32,11 @@ public class RoundRobin {
     String resultadoE;
     DockerClient client;
     DefaultDockerClientConfig clientConfig;
-    int quantum;
+    //int quantum;
     int tiempoActual;
     
 
-    public RoundRobin(List<Contenedor1> contenedores, int quantum) {
+    public FIFO(List<Contenedor1> contenedores) {
         this.contenedorQueue = new LinkedList<>();
 
         this.numContenedores = contenedores.size();
@@ -45,7 +45,7 @@ public class RoundRobin {
         for (Contenedor1 cont : contenedores) {
             contenedorQueue.offer(cont);
         }
-        this.quantum = quantum;
+        //this.quantum = quantum;
         //totalTornaroundTime=0;
         //totalResponseTime=0;
 
@@ -127,10 +127,10 @@ public class RoundRobin {
         System.out.println("Tiempo " + tiempoActual + ": Iniciando contenedor " + container.getNombreI());
     }
 
-    private void stopContainer(Contenedor1 container) {
+   /* private void stopContainer(Contenedor1 container) {
         client.stopContainerCmd(container.getContainerId()).exec();
         System.out.println("Tiempo " + tiempoActual + ": Deteniendo contenedor " + container.getNombreI());
-    }
+    }*/
 
     public String getResultadoE() {
         return resultadoE;
@@ -174,7 +174,7 @@ public class RoundRobin {
             }
 
             if (currentContainer != null) {
-                long tiempoEjecucion = Math.min(currentContainer.getTiempoRestante(), quantum);
+                long tiempoEjecucion = currentContainer.getTiempoRestante();
                 Thread.sleep(tiempoEjecucion*1000);
                 tiempoActual += tiempoEjecucion;
                 currentContainer.setTiempoRestante(currentContainer.getTiempoRestante() - tiempoEjecucion);
@@ -231,7 +231,7 @@ public class RoundRobin {
         conts.add(cont3);
         conts.add(cont4);
 
-        RoundRobin scheduler = new RoundRobin(conts, 2);
+        FIFO scheduler = new FIFO(conts);
 
         try {
             scheduler.ejecutarContenedores();
