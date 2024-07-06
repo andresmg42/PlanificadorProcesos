@@ -46,8 +46,7 @@ public class RoundRobin {
             contenedorQueue.offer(cont);
         }
         this.quantum = quantum;
-        //totalTornaroundTime=0;
-        //totalResponseTime=0;
+        
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
         this.client = DockerClientBuilder.getInstance(clientConfig).build();

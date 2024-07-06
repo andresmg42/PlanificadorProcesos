@@ -1,27 +1,20 @@
 package Algoritmos;
 
 import cliente_docker.versionesContenedores.Contenedor1;
-import cliente_docker.versionesContenedores.DockerContainer;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.BuildResponseItem;
-import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.PruneType;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
 import java.io.File;
-import java.io.IOException;
 
 import java.util.PriorityQueue;
 import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,16 +153,7 @@ public class HRRN {
         System.out.println("Tiempo " + currentTime + ": Deteniendo contenedor " + container.getNombreI());
     }
 
-    /*public void actualizarNTAT(PriorityQueue<Contenedor1> readyQueue){
-   
-    Iterator it=readyQueue.iterator();
-    while(it.hasNext()){
-        Contenedor1 cont =(Contenedor1) it.next();
-        cont.setNTAT(this.currentTime- cont.getTiempoLlegada()/cont.getTiempoEstimadoIngresado());
     
-    }
-    
-    }*/
     public void actualizarNTAT() {
       PriorityQueue<Contenedor1> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
       
@@ -183,21 +167,6 @@ public class HRRN {
        
     }
     
-    /*public void invertirQueue(){
-        PriorityQueue<Contenedor1> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
-        for(Contenedor1 cont:this.readyQueue){
-            maxHeap.offer(cont);
-        
-        }
-        
-        readyQueue=maxHeap;
-        
-        
-    
-        // Agregar elementos
-        
-
-    }*/
 
    
 

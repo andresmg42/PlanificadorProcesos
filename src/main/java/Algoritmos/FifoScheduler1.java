@@ -1,4 +1,4 @@
-package Algoritmos;
+/*package Algoritmos;
 
 import cliente_docker.versionesContenedores.Contenedor1;
 import java.util.ArrayList;
@@ -118,39 +118,6 @@ public class FifoScheduler1 {
 
     public static void main(String[] args) {
         
-        // Crear instancia del planificador FIFO
-       Contenedor1 cont1 = new Contenedor1(1,"sleep2", "sleep 2",0,2400);
-       Contenedor1 cont2 = new Contenedor1(2,"sleep3", "sleep 3", 1500, 3000);
-       Contenedor1 cont3 = new Contenedor1(3,"sleep4", "sleep 4", 2000, 4000); 
-       
-       List<Contenedor1> conts=new ArrayList<>();
-       conts.add(cont1);
-       conts.add(cont2); 
-       conts.add(cont3); 
         
-        
-        
-        FifoScheduler1 scheduler = new FifoScheduler1(conts);
-        
-      
-        
-        scheduler.ejecutarContenedores();
-        
-        //String result=scheduler.getResultadoE();
-        
-        for(Contenedor1 c: scheduler.getContenedores()){
-            System.out.println(c.getTornaroundTime());
-        }
-
-        // Crear y agregar contenedores
-        /* Contenedor1 cont1 = new Contenedor1("sleep2", "sleep 2",0,2400);
-        Contenedor1 cont2 = new Contenedor1("sleep3", "sleep3", 1500, 3000);
-        Contenedor1 cont3 = new Contenedor1("sleep4", "sleep 4", 2000, 4000);
-
-        scheduler.agregarContenedor(cont1);
-        scheduler.agregarContenedor(cont2);
-        scheduler.agregarContenedor(cont3);*/
-        // Ejecutar contenedores
-        //scheduler.ejecutarContenedores();
     }
-}
+}*/

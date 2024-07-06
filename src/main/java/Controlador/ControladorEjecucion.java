@@ -4,7 +4,7 @@
  */
 package Controlador;
 
-import Algoritmos.FifoScheduler1;
+import Algoritmos.FIFO;
 import Algoritmos.RoundRobin;
 import Algoritmos.SPN;
 import Algoritmos.SRT;
@@ -30,8 +30,9 @@ public class ControladorEjecucion {
 
     DaoEjecucion daoE;
     DaoContenedor daoC;
-    FifoScheduler1 fifo;
+    //FifoScheduler1 fifo;
     RoundRobin RR;
+    FIFO fifo;
     
     ControladorEjecucion() {
         daoE = new DaoEjecucion();
@@ -96,7 +97,7 @@ public class ControladorEjecucion {
         
         switch (nombreAlgoritmo) {
             case "FIFO":
-                fifo = new FifoScheduler1(conts);
+                fifo = new FIFO(conts);
                 fifo.ejecutarContenedores();
                 
                 for (Contenedor1 c : conts) {

@@ -77,7 +77,7 @@ public class Contenedor1 implements Comparable<Contenedor1>{
         
     }
 
-    public String crearImagen() {
+    /*public String crearImagen() {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         try {
             File dockerfile = new File("src/main/java/dockerfiles/Dockerfile");
@@ -112,9 +112,9 @@ public class Contenedor1 implements Comparable<Contenedor1>{
         }
         return null;
 
-    }
+    }*/
 
-    public String crearContenedor() {
+    /*public String crearContenedor() {
         final StringBuilder retorno = new StringBuilder();
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         Image image = verificarImagen();
@@ -163,9 +163,9 @@ public class Contenedor1 implements Comparable<Contenedor1>{
             }
         }
         return retorno.toString();
-    }
+    }*/
 
-    public Image verificarImagen() {
+    /*public Image verificarImagen() {
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         List<Image> images = client.listImagesCmd().exec();
         if (images.isEmpty()) {
@@ -186,9 +186,9 @@ public class Contenedor1 implements Comparable<Contenedor1>{
 
         }
 
-    }
+    }*/
 
-    public String ejecutarContenedor() {
+    /*public String ejecutarContenedor() {
 
         if (verificarImagen().getId() == null) {
 
@@ -200,7 +200,7 @@ public class Contenedor1 implements Comparable<Contenedor1>{
 
         return resultado;
 
-    }
+    }*/
 
     public String getNombreI() {
         return nombreI;
@@ -329,7 +329,7 @@ public class Contenedor1 implements Comparable<Contenedor1>{
 //quitar sheduler y 
     public static void main(String[] args) {
         Contenedor1 cont = new Contenedor1(15, "sleep4", "sleep 4", 0,4);
-        cont.ejecutarContenedor();
+      
         System.out.println(cont.getTiempoEstimadoReal());
     }
 

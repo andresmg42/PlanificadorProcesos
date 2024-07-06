@@ -18,8 +18,6 @@ Algoritmos/SRT.class
 cliente_docker/versionesContenedores/Contenedor4.class
 DockerContainer.class
 Algoritmos/RoundRobin1.class
-Algoritmos/FifoScheduler1.class
-cliente_docker/versionesContenedores/Contenedor1$2.class
 Controlador/ControladorCL.class
 Controlador/ControladorEjecucion$2.class
 Algoritmos/SRT$1.class
@@ -34,7 +32,6 @@ Algoritmos/FIFO.class
 Algoritmos/RoundRobin$1.class
 logica/Ejecucion.class
 Controlador/ControladorContenedor.class
-cliente_docker/versionesContenedores/Contenedor1$1.class
 cliente_docker/versionesContenedores/Contenedor5.class
 logica/Comando.class
 Algoritmos/SPN.class

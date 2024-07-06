@@ -45,9 +45,7 @@ public class FIFO {
         for (Contenedor1 cont : contenedores) {
             contenedorQueue.offer(cont);
         }
-        //this.quantum = quantum;
-        //totalTornaroundTime=0;
-        //totalResponseTime=0;
+       
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
         this.client = DockerClientBuilder.getInstance(clientConfig).build();
@@ -126,11 +124,6 @@ public class FIFO {
         ejecutarContenedor(container);
         System.out.println("Tiempo " + tiempoActual + ": Iniciando contenedor " + container.getNombreI());
     }
-
-   /* private void stopContainer(Contenedor1 container) {
-        client.stopContainerCmd(container.getContainerId()).exec();
-        System.out.println("Tiempo " + tiempoActual + ": Deteniendo contenedor " + container.getNombreI());
-    }*/
 
     public String getResultadoE() {
         return resultadoE;
