@@ -25,8 +25,8 @@ public class SPN {
     private long currentTime;
     private DockerClient dockerClient;
     private String resultado;
-    private long tornaroundTimeP;
-    private long responseTimeP;
+    private double tornaroundTimeP;
+    private double responseTimeP;
     private long totalResponseTime;
     private long totalTurnaroundTime;
     DefaultDockerClientConfig clientConfig;
@@ -146,10 +146,10 @@ public class SPN {
         System.out.println("Tiempo " + currentTime + ": Iniciando contenedor " + container.getNombreI());
     }
     
-    private void stopContainer(Contenedor1 container) {
+    /*private void stopContainer(Contenedor1 container) {
         dockerClient.stopContainerCmd(container.getContainerId()).exec();
         System.out.println("Tiempo " + currentTime + ": Deteniendo contenedor " + container.getNombreI());
-    }
+    }*/
     
     public String runScheduler() {
         //containers.sort((a, b) -> Long.compare(a.getTiempoLlegada(), b.getTiempoLlegada()));
@@ -224,11 +224,11 @@ public class SPN {
         return resultado;
     }
     
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
     
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
     

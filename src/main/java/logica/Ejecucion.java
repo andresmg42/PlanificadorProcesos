@@ -15,8 +15,8 @@ public class Ejecucion {
     private int ejecucion_id;
     private int listado_id;
     private String algoritmo;
-    private long tornaroundTimeP;
-    private long responseTimeP;
+    private double tornaroundTimeP;
+    private double responseTimeP;
     private Date fecha;
     private Time Time;
     
@@ -75,19 +75,19 @@ public class Ejecucion {
         this.Time = Time;
     }
 
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
 
-    public void setTornaroundTimeP(long tornaroundTimeP) {
+    public void setTornaroundTimeP(double tornaroundTimeP) {
         this.tornaroundTimeP = tornaroundTimeP;
     }
 
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
 
-    public void setResponseTimeP(long responseTimeP) {
+    public void setResponseTimeP(double responseTimeP) {
         this.responseTimeP = responseTimeP;
     }
     

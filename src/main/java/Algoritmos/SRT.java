@@ -25,8 +25,8 @@ public class SRT {
     private long currentTime;
     private DockerClient dockerClient;
     private String resultado;
-    private long tornaroundTimeP;
-    private long responseTimeP;
+    private double tornaroundTimeP;
+    private double responseTimeP;
     private long totalResponseTime;
     private long totalTurnaroundTime;
     DefaultDockerClientConfig clientConfig;
@@ -60,7 +60,7 @@ public class SRT {
             File baseDir = dockerfile.getParentFile();
 
             // Build image
-            String imageId = dockerClient.buildImageCmd(baseDir)
+            String imageId = DockerClient.buildImageCmd(baseDir)
                     .withDockerfile(dockerfile)
                     .withBuildArg("VECTOR",cont.getComando())
                     .withTag(cont.getNombreI())
@@ -124,11 +124,11 @@ public class SRT {
         final StringBuilder retorno = new StringBuilder();
         DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
         Image image = verificarImagen(cont);
-        CreateContainerResponse container = client.createContainerCmd(image.getId()).withHostConfig(HostConfig.newHostConfig().withAutoRemove(true))
+        CreateContainerResponse container = dockerClient.createContainerCmd(image.getId()).withHostConfig(HostConfig.newHostConfig().withAutoRemove(true))
             .exec();
         cont.setContainerId(container.getId());
 
-        client.startContainerCmd(container.getId()).exec();
+        dockerClient.startContainerCmd(container.getId()).exec();
 
         
 
@@ -152,7 +152,8 @@ public class SRT {
     }
 
     private void stopContainer(Contenedor1 container) {
-        dockerClient.stopContainerCmd(container.getContainerId()).exec();
+        DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
+        client.stopContainerCmd(container.getContainerId()).exec();
         System.out.println("Tiempo " + currentTime + ": Deteniendo contenedor " + container.getNombreI());
     }
 
@@ -236,11 +237,11 @@ public class SRT {
         return resultado;
     }
 
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
 
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
 

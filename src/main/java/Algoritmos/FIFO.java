@@ -27,8 +27,8 @@ public class FIFO {
     List<Contenedor1> contenedores;
     long totalTornaroundTime;
     long totalResponseTime;
-    long tornaroundTimeP;
-    long responseTimeP;
+    double tornaroundTimeP;
+    double responseTimeP;
     String resultadoE;
     DockerClient client;
     DefaultDockerClientConfig clientConfig;
@@ -49,6 +49,7 @@ public class FIFO {
 
         clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
         this.client = DockerClientBuilder.getInstance(clientConfig).build();
+        resultadoE = "\n\n---------------------estos son los resultados---------------------\n\n";
     }
 
     public String crearImagen(Contenedor1 cont) {
@@ -122,6 +123,7 @@ public class FIFO {
             totalResponseTime+=container.getResponseTime();
         }
         ejecutarContenedor(container);
+        resultadoE+="Tiempo " + tiempoActual + ": Iniciando contenedor " + container.getNombreI()+"\n";
         System.out.println("Tiempo " + tiempoActual + ": Iniciando contenedor " + container.getNombreI());
     }
 
@@ -133,22 +135,17 @@ public class FIFO {
         this.resultadoE = resultadoE;
     }
 
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
 
-    public void setTornaroundTimeP(long tornaroundTimeP) {
-        this.tornaroundTimeP = tornaroundTimeP;
-    }
+   
 
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
 
-    public void setResponseTimeP(long responseTimeP) {
-        this.responseTimeP = responseTimeP;
-    }
-    
+  
     
     
     
@@ -156,7 +153,6 @@ public class FIFO {
     public void ejecutarContenedores() throws InterruptedException {
         
         long count = 0;
-        resultadoE = "";
         Contenedor1 currentContainer = null;
 
         while (!contenedorQueue.isEmpty() || currentContainer != null) {
@@ -176,7 +172,9 @@ public class FIFO {
                     currentContainer.setTiempoFinal(tiempoActual);
                     currentContainer.setTornaroundTime(currentContainer.getTiempoFinal() - currentContainer.getTiempoLlegada());
                     totalTornaroundTime += currentContainer.getTornaroundTime();
+                    resultadoE+="Tiempo " + this.tiempoActual + ": Contenedor " + currentContainer.getNombreI() + " completado"+"\n";
                     System.out.println("Tiempo " + this.tiempoActual + ": Contenedor " + currentContainer.getNombreI() + " completado");
+                    
                     currentContainer = null;
                     count++;
                 } else {
@@ -193,7 +191,7 @@ public class FIFO {
         }
 
         for (Contenedor1 cont : contenedores) {
-            resultadoE += "Resultados: " + cont.getNombreI() + "\n";
+            resultadoE += "\nResultados: " + cont.getNombreI() + "\n";
             resultadoE += "Tiempo llegada: " + cont.getTiempoLlegada() + "\n";
             resultadoE += "Tiempo inicial: " + cont.getTiempoInicio() + "\n";
             resultadoE += "Tiempo final: " + cont.getTiempoFinal() + "\n";

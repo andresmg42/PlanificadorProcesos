@@ -8,31 +8,11 @@ package cliente_docker.versionesContenedores;
  *
  * @author andresuv
  */
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.BuildImageResultCallback;
 
-import com.github.dockerjava.api.command.CreateContainerResponse;
-
-import com.github.dockerjava.api.model.BuildResponseItem;
-
-import com.github.dockerjava.api.command.WaitContainerResultCallback;
-
-import com.github.dockerjava.api.model.Frame;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
-import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.PruneType;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientBuilder;
-import java.io.File;
-import java.io.IOException;
-
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Contenedor1 implements Comparable<Contenedor1>{
 
-    DefaultDockerClientConfig clientConfig;
+    
     String nombreI;
     String comando;
     int contenedor_id;
@@ -60,7 +40,7 @@ public class Contenedor1 implements Comparable<Contenedor1>{
         this.NTAT= 0.0;
         
 
-        clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
+        
 
     }
     
@@ -77,130 +57,6 @@ public class Contenedor1 implements Comparable<Contenedor1>{
         
     }
 
-    /*public String crearImagen() {
-        DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
-        try {
-            File dockerfile = new File("src/main/java/dockerfiles/Dockerfile");
-            File baseDir = dockerfile.getParentFile();
-
-            // Build image
-            String imageId = client.buildImageCmd(baseDir)
-                    .withDockerfile(dockerfile)
-                    .withBuildArg("VECTOR", comando)
-                    .withTag(nombreI)
-                    .exec(new BuildImageResultCallback() {
-                        @Override
-                        public void onNext(BuildResponseItem item) {
-                            System.out.println("" + item.getStream());
-                            super.onNext(item);
-                        }
-                    }).awaitImageId();
-
-            System.out.println("Image created with ID: " + imageId);
-
-            return imageId;
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                client.pruneCmd(PruneType.IMAGES).withLabelFilter("<none>").exec();
-                client.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Contenedor1.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
-
-    }*/
-
-    /*public String crearContenedor() {
-        final StringBuilder retorno = new StringBuilder();
-        DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
-        Image image = verificarImagen();
-        CreateContainerResponse container = client.createContainerCmd(image.getId()).exec();
-        //this.containerId=container.getId();
-        client.startContainerCmd(container.getId()).exec();
-
-        LogContainerResultCallback callback = new LogContainerResultCallback() {
-            @Override
-            public void onNext(Frame item) {
-
-                retorno.append(new String(item.getPayload())).append("\n");
-
-            }
-        };
-
-        try {
-            if (this.tiempoLlegada == 0) {
-                tiempo0 = System.nanoTime();
-            }
-            this.tiempoInicio =( System.nanoTime()- tiempo0)/1000000000;
-
-        
-            client.logContainerCmd(container.getId())
-                    .withStdOut(true)
-                    .withStdErr(true)
-                    .exec(callback)
-                    .awaitCompletion();
-            client.waitContainerCmd(container.getId()).exec(new WaitContainerResultCallback()).awaitCompletion();
-
-            
-
-            this.tiempoFinal = (System.nanoTime()- tiempo0)/1000000000;
-            this.tiempoEstimadoReal = this.tiempoFinal - this.tiempoInicio;
-            this.tornaroundTime = this.tiempoFinal - this.tiempoLlegada;
-            this.responseTime = this.tiempoInicio - tiempoLlegada;
-
-            client.removeContainerCmd(container.getId()).exec();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Contenedor1.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                client.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Contenedor1.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return retorno.toString();
-    }*/
-
-    /*public Image verificarImagen() {
-        DockerClient client = DockerClientBuilder.getInstance(clientConfig).build();
-        List<Image> images = client.listImagesCmd().exec();
-        if (images.isEmpty()) {
-            return null;
-        } else {
-            Image image = new Image();
-
-            for (Image im : images) {
-                if (im.getRepoTags() != null) {
-                    for (String tag : im.getRepoTags()) {
-                        if (tag.contains(nombreI)) {
-                            image = im;
-                        }
-                    }
-                }
-            }
-            return image;
-
-        }
-
-    }*/
-
-    /*public String ejecutarContenedor() {
-
-        if (verificarImagen().getId() == null) {
-
-            crearImagen();
-
-        }
-
-        String resultado = crearContenedor();
-
-        return resultado;
-
-    }*/
 
     public String getNombreI() {
         return nombreI;

@@ -27,8 +27,8 @@ public class RoundRobin {
     List<Contenedor1> contenedores;
     long totalTornaroundTime;
     long totalResponseTime;
-    long tornaroundTimeP;
-    long responseTimeP;
+    double tornaroundTimeP;
+    double responseTimeP;
     String resultadoE;
     DockerClient client;
     DefaultDockerClientConfig clientConfig;
@@ -120,7 +120,7 @@ public class RoundRobin {
         if (container.getTiempoEstimadoIngresado() == container.getTiempoRestante()) {
             container.setTiempoInicio(tiempoActual);
             container.setResponseTime(tiempoActual - container.getTiempoLlegada());
-            totalResponseTime+=container.getResponseTime();
+            totalResponseTime += container.getResponseTime();  // Acumula el tiempo de respuesta
         }
         ejecutarContenedor(container);
         System.out.println("Tiempo " + tiempoActual + ": Iniciando contenedor " + container.getNombreI());
@@ -139,25 +139,13 @@ public class RoundRobin {
         this.resultadoE = resultadoE;
     }
 
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
 
-    public void setTornaroundTimeP(long tornaroundTimeP) {
-        this.tornaroundTimeP = tornaroundTimeP;
-    }
-
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
-
-    public void setResponseTimeP(long responseTimeP) {
-        this.responseTimeP = responseTimeP;
-    }
-    
-    
-    
-    
 
     public void ejecutarContenedores() throws InterruptedException {
         
@@ -195,7 +183,7 @@ public class RoundRobin {
         try {
             client.close();
         } catch (IOException ex) {
-            Logger.getLogger(RoundRobinCorregido.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RoundRobin.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         for (Contenedor1 cont : contenedores) {
@@ -208,8 +196,8 @@ public class RoundRobin {
             resultadoE += "ResponseTime: " + cont.getResponseTime() + "\n\n";
         }
 
-        tornaroundTimeP = totalTornaroundTime / contenedores.size();
-        responseTimeP = totalResponseTime / contenedores.size();
+        tornaroundTimeP = totalTornaroundTime / (double)contenedores.size();
+        responseTimeP = totalResponseTime / (double)contenedores.size();  // Calcula el promedio correctamente
         resultadoE += "TornaroundTimePromedio: " + tornaroundTimeP + "\n";
         resultadoE += "ResponseTimePromedio: " + responseTimeP + "\n\n";
     }
@@ -235,7 +223,7 @@ public class RoundRobin {
         try {
             scheduler.ejecutarContenedores();
         } catch (InterruptedException ex) {
-            Logger.getLogger(RoundRobinCorregido.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RoundRobin.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         System.out.println(scheduler.getResultadoE());

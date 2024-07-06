@@ -19,7 +19,6 @@ cliente_docker/versionesContenedores/Contenedor4.class
 DockerContainer.class
 Algoritmos/RoundRobin1.class
 Controlador/ControladorCL.class
-Controlador/ControladorEjecucion$2.class
 Algoritmos/SRT$1.class
 Dao/DaoCL.class
 Dao/DaoConsultasExternas.class

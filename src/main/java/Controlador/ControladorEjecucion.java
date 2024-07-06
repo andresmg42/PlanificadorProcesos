@@ -5,15 +5,16 @@
 package Controlador;
 
 import Algoritmos.FIFO;
+import Algoritmos.HRRN;
 import Algoritmos.RoundRobin;
 import Algoritmos.SPN;
 import Algoritmos.SRT;
 import Dao.DaoContenedor;
 import Dao.DaoEjecucion;
 import cliente_docker.versionesContenedores.Contenedor1;
-import cliente_docker.versionesContenedores.Contenedor3;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,16 +31,15 @@ public class ControladorEjecucion {
 
     DaoEjecucion daoE;
     DaoContenedor daoC;
-    //FifoScheduler1 fifo;
     RoundRobin RR;
     FIFO fifo;
     
-    ControladorEjecucion() {
+    public ControladorEjecucion() {
         daoE = new DaoEjecucion();
         daoC = new DaoContenedor();
     }
     
-    public int insertarEjecucion(int listado_id, String algoritmo, long tornaroundTimeP, long responseTimeP, Date fecha, Time hora) {
+    public int insertarEjecucion(int listado_id, String algoritmo, double tornaroundTimeP, double responseTimeP, Date fecha, Time hora) {
         Ejecucion e = new Ejecucion();
         e.setListado_id(listado_id);
         e.setAlgoritmo(algoritmo);
@@ -49,6 +49,11 @@ public class ControladorEjecucion {
         e.setResponseTimeP(responseTimeP);
         return daoE.DaoInsertarEjecucion(e);
         
+    }
+    
+    public ResultSet consultarResultados(int listado_id){
+    return daoE.consultarResultados(listado_id);
+    
     }
     
     public ResultSet listarEjecucion() {
@@ -79,21 +84,80 @@ public class ControladorEjecucion {
         return contenedores;
     }
     
-    public List<Contenedor3> ordenarContenedores3(List<Contenedor3> contenedores) {
-        Collections.sort(contenedores, new Comparator<Contenedor3>() {
-            @Override
-            public int compare(Contenedor3 c1, Contenedor3 c2) {
-                return Long.compare(c1.getTiempoLlegada(), c2.getTiempoLlegada());
-            }
-        });
-        return contenedores;
+ 
+    
+    public int  funcionAuxiliarEjec(String nombreAlgoritmo,List<Contenedor1> conts,int listado_id,double TurnaroundTimeP,double ResponseTimeP){
+    for (Contenedor1 c : conts) {
+                    int actualizarC = daoC.DaoActualizarContenedor(c);
+                    System.out.println("resultado de ActualizarContenedor: " + actualizarC);
+                    
+                }
+                
+                Object[] fechaHora = fechaHoraActual();
+                int crearEjecucion = insertarEjecucion(listado_id,nombreAlgoritmo, TurnaroundTimeP, ResponseTimeP, (Date) fechaHora[0], (Time) fechaHora[1]);
+                return crearEjecucion;
+                
+    }
+    
+    public String EjecutarAlgoritmo(String nombreAlgoritmo,int listado_id) throws InterruptedException{
+    List<Contenedor1> conts = ordenarContenedores(daoC.DaobtenerConetenedoresListado(listado_id));
+    
+    switch (nombreAlgoritmo) {
+            case "FIFO":
+                fifo = new FIFO(conts);
+                fifo.ejecutarContenedores();
+                
+                int res=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,fifo.getTornaroundTimeP(),fifo.getResponseTimeP());
+                System.out.println("resultado crearEjecucion: " + res);
+                
+                return fifo.getResultadoE();
+            
+            case "RoundRobin":                
+                RR = new RoundRobin(conts, 2);
+                RR.ejecutarContenedores();
+                int res1=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,RR.getTornaroundTimeP(),RR.getResponseTimeP());
+                System.out.println("resultado crearEjecucion: " + res1);
+                return RR.getResultadoE();
+            
+            case "SRT": 
+                
+                SRT S = new SRT(conts);
+                S.runScheduler();
+                int res2=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,S.getTornaroundTimeP(),S.getResponseTimeP());
+                System.out.println("resultado crearEjecucion: " + res2);
+                return S.getResultado();
+                
+             case "SPN": 
+                
+                SPN SP = new SPN(conts);
+                SP.runScheduler();
+                int res3=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,SP.getTornaroundTimeP(),SP.getResponseTimeP());
+                System.out.println("resultado crearEjecucion: " + res3);
+                return SP.getResultado();
+                
+            case "HRRN": 
+                
+                HRRN hrrn = new HRRN(conts);
+                hrrn.runScheduler();
+                int res4=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,hrrn.getTornaroundTimeP(),hrrn.getResponseTimeP());
+                System.out.println("resultado crearEjecucion: " + res4);
+                return hrrn.getResultado();
+
+            // se pueden agregar más casos según sea necesario
+            default:
+                // código a ejecutar si ninguno de los casos anteriores coincide
+                return null;
+            
+        }
     }
     
 
     
-    public String EjecutarAlgoritmo(String nombreAlgoritmo, int listado_id) throws InterruptedException {
+    /*public String EjecutarAlgoritmo(String nombreAlgoritmo, int listado_id) throws InterruptedException {
         List<Contenedor1> conts = ordenarContenedores(daoC.DaobtenerConetenedoresListado(listado_id));
         //List<Contenedor3> conts3 = ordenarContenedores3(daoC.DaobtenerConetenedoresListado3(listado_id));
+        
+      
         
         switch (nombreAlgoritmo) {
             case "FIFO":
@@ -160,15 +224,32 @@ public class ControladorEjecucion {
             
         }
         
-    }
+    }*/
     
     public static void main(String[] args) {
         ControladorEjecucion cont = new ControladorEjecucion();
-        try {
+        /*try {
             System.out.println(cont.EjecutarAlgoritmo("RoundRobin", 2));
         } catch (InterruptedException ex) {
             Logger.getLogger(ControladorEjecucion.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        
+        ResultSet res=cont.consultarResultados(2);
+        
+        try {
+            while(res.next()){
+                System.out.println(res.getInt(1));
+                System.out.println(res.getString(2));
+                System.out.println(res.getDouble(3));
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorEjecucion.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
+        
         
     }
     

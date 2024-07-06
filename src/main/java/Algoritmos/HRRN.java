@@ -27,8 +27,8 @@ public class HRRN {
     private long currentTime;
     private DockerClient dockerClient;
     private String resultado;
-    private long tornaroundTimeP;
-    private long responseTimeP;
+    private double tornaroundTimeP;
+    private double responseTimeP;
     private long totalResponseTime;
     private long totalTurnaroundTime;
     DefaultDockerClientConfig clientConfig;
@@ -243,11 +243,11 @@ public class HRRN {
         return resultado;
     }
 
-    public long getTornaroundTimeP() {
+    public double getTornaroundTimeP() {
         return tornaroundTimeP;
     }
 
-    public long getResponseTimeP() {
+    public double getResponseTimeP() {
         return responseTimeP;
     }
 
