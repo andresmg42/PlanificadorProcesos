@@ -18,9 +18,9 @@ public class Interfaz {
     Connection conexion = null;   
         
     Interfaz(){
-        url="jdbc:postgresql://localhost:5432/ProyectoSO";
-        usuario = "andres";
-        password = "12345";
+        url="jdbc:postgresql://172.17.0.2/mydatabase";
+        usuario = "myuser";
+        password = "mypassword";
         }
     
             public Connection openConnection(){

@@ -12,13 +12,29 @@ import Algoritmos.SRT;
 import Dao.DaoContenedor;
 import Dao.DaoEjecucion;
 import cliente_docker.versionesContenedores.Contenedor1;
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.BuildImageResultCallback;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.ListContainersCmd;
+import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.BuildResponseItem;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.api.model.Volume;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+import java.io.File;
+import static java.nio.file.Files.list;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import logica.Ejecucion;
@@ -33,12 +49,98 @@ public class ControladorEjecucion {
     DaoContenedor daoC;
     RoundRobin RR;
     FIFO fifo;
-    
+    DockerClient client;
+    DefaultDockerClientConfig clientConfig;
+
     public ControladorEjecucion() {
         daoE = new DaoEjecucion();
         daoC = new DaoContenedor();
+        clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost("unix:///var/run/docker.sock").build();
+        this.client = DockerClientBuilder.getInstance(clientConfig).build();
+        //ejecutarDB();
+
+    }
+
+    public void inicializarContenedorBaseDeDatos() {
+
+    }
+
+    public String crearImagen() {
+        try {
+            File baseDir = new File("src/main/java/dockerfileDB/Dockerfile");
+            String imageId = client.buildImageCmd(baseDir)
+                    .withTags(Set.of("my-postgres-image"))
+                    .exec(new BuildImageResultCallback())
+                    .awaitImageId();
+
+            return imageId;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Image verificarImagen() {
+        List<Image> images = client.listImagesCmd().exec();
+        if (images.isEmpty()) {
+            return null;
+        } else {
+            for (Image im : images) {
+                if (im.getRepoTags() != null) {
+                    for (String tag : im.getRepoTags()) {
+                        if (tag.contains("my-postgres-image")) {
+                            return im;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public String crearContenedor(String imagen_id) {
+
+        CreateContainerResponse container = client.createContainerCmd(imagen_id)
+                .withEnv("POSTGRES_DB=mydatabase", "POSTGRES_USER=myuser", "POSTGRES_PASSWORD=mypassword")
+                .withName("contenedorProyecto")
+                .withHostConfig(
+                        HostConfig.newHostConfig()
+                                .withBinds(new Bind("postgres-data", new Volume("/var/lib/postgresql/data")))
+                                .withAutoRemove(true)
+                )
+                .exec();
+
+        client.startContainerCmd(container.getId()).exec();
+        return container.getId();
     }
     
+  /*public String verificarContenedor() {
+    List<String> nombres = new ArrayList<>();
+    nombres.add("contenedorProyecto");
+
+    // Ejecuta el comando de listar contenedores con el filtro de nombre
+    List<Container> list = client.listContainersCmd().withNameFilter(nombres).exec();
+
+    // Verifica si la lista no está vacía
+    if (!list.isEmpty()) {
+        return list.get(0).getId();
+    } else {
+        // Retorna un mensaje apropiado o null si no se encontró el contenedor
+        return null; // O podrías retornar un mensaje como "Contenedor no encontrado"
+    }
+}*/
+    
+
+    public void ejecutarDB() {
+        Image imagen = verificarImagen();
+        if (imagen.getId() == null) {
+            String imagen_id = crearImagen();
+            crearContenedor(imagen_id);
+        }
+        crearContenedor("my-postgres-image");
+
+    }
+
     public int insertarEjecucion(int listado_id, String algoritmo, double tornaroundTimeP, double responseTimeP, Date fecha, Time hora) {
         Ejecucion e = new Ejecucion();
         e.setListado_id(listado_id);
@@ -48,18 +150,18 @@ public class ControladorEjecucion {
         e.setTornaroundTimeP(tornaroundTimeP);
         e.setResponseTimeP(responseTimeP);
         return daoE.DaoInsertarEjecucion(e);
-        
+
     }
-    
-    public ResultSet consultarResultados(int listado_id){
-    return daoE.consultarResultados(listado_id);
-    
+
+    public ResultSet consultarResultados(int listado_id) {
+        return daoE.consultarResultados(listado_id);
+
     }
-    
+
     public ResultSet listarEjecucion() {
         return daoE.DaolistarEjecucion();
     }
-    
+
     public Object[] fechaHoraActual() {
         // Capturar la fecha y hora actual
         java.util.Date utilDate = new java.util.Date();  // Captura la fecha y hora actual
@@ -73,7 +175,7 @@ public class ControladorEjecucion {
         // Imprimir resultados
         return new Object[]{sqlDate, sqlTime};
     }
-    
+
     public List<Contenedor1> ordenarContenedores(List<Contenedor1> contenedores) {
         Collections.sort(contenedores, new Comparator<Contenedor1>() {
             @Override
@@ -83,63 +185,61 @@ public class ControladorEjecucion {
         });
         return contenedores;
     }
-    
- 
-    
-    public int  funcionAuxiliarEjec(String nombreAlgoritmo,List<Contenedor1> conts,int listado_id,double TurnaroundTimeP,double ResponseTimeP){
-    for (Contenedor1 c : conts) {
-                    int actualizarC = daoC.DaoActualizarContenedor(c);
-                    System.out.println("resultado de ActualizarContenedor: " + actualizarC);
-                    
-                }
-                
-                Object[] fechaHora = fechaHoraActual();
-                int crearEjecucion = insertarEjecucion(listado_id,nombreAlgoritmo, TurnaroundTimeP, ResponseTimeP, (Date) fechaHora[0], (Time) fechaHora[1]);
-                return crearEjecucion;
-                
+
+    public int funcionAuxiliarEjec(String nombreAlgoritmo, List<Contenedor1> conts, int listado_id, double TurnaroundTimeP, double ResponseTimeP) {
+        for (Contenedor1 c : conts) {
+            int actualizarC = daoC.DaoActualizarContenedor(c);
+            System.out.println("resultado de ActualizarContenedor: " + actualizarC);
+
+        }
+
+        Object[] fechaHora = fechaHoraActual();
+        int crearEjecucion = insertarEjecucion(listado_id, nombreAlgoritmo, TurnaroundTimeP, ResponseTimeP, (Date) fechaHora[0], (Time) fechaHora[1]);
+        return crearEjecucion;
+
     }
-    
-    public String EjecutarAlgoritmo(String nombreAlgoritmo,int listado_id) throws InterruptedException{
-    List<Contenedor1> conts = ordenarContenedores(daoC.DaobtenerConetenedoresListado(listado_id));
-    
-    switch (nombreAlgoritmo) {
+
+    public String EjecutarAlgoritmo(String nombreAlgoritmo, int listado_id) throws InterruptedException {
+        List<Contenedor1> conts = ordenarContenedores(daoC.DaobtenerConetenedoresListado(listado_id));
+
+        switch (nombreAlgoritmo) {
             case "FIFO":
                 fifo = new FIFO(conts);
                 fifo.ejecutarContenedores();
-                
-                int res=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,fifo.getTornaroundTimeP(),fifo.getResponseTimeP());
+
+                int res = funcionAuxiliarEjec(nombreAlgoritmo, conts, listado_id, fifo.getTornaroundTimeP(), fifo.getResponseTimeP());
                 System.out.println("resultado crearEjecucion: " + res);
-                
+
                 return fifo.getResultadoE();
-            
-            case "RoundRobin":                
+
+            case "RoundRobin":
                 RR = new RoundRobin(conts, 2);
                 RR.ejecutarContenedores();
-                int res1=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,RR.getTornaroundTimeP(),RR.getResponseTimeP());
+                int res1 = funcionAuxiliarEjec(nombreAlgoritmo, conts, listado_id, RR.getTornaroundTimeP(), RR.getResponseTimeP());
                 System.out.println("resultado crearEjecucion: " + res1);
                 return RR.getResultadoE();
-            
-            case "SRT": 
-                
+
+            case "SRT":
+
                 SRT S = new SRT(conts);
                 S.runScheduler();
-                int res2=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,S.getTornaroundTimeP(),S.getResponseTimeP());
+                int res2 = funcionAuxiliarEjec(nombreAlgoritmo, conts, listado_id, S.getTornaroundTimeP(), S.getResponseTimeP());
                 System.out.println("resultado crearEjecucion: " + res2);
                 return S.getResultado();
-                
-             case "SPN": 
-                
+
+            case "SPN":
+
                 SPN SP = new SPN(conts);
                 SP.runScheduler();
-                int res3=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,SP.getTornaroundTimeP(),SP.getResponseTimeP());
+                int res3 = funcionAuxiliarEjec(nombreAlgoritmo, conts, listado_id, SP.getTornaroundTimeP(), SP.getResponseTimeP());
                 System.out.println("resultado crearEjecucion: " + res3);
                 return SP.getResultado();
-                
-            case "HRRN": 
-                
+
+            case "HRRN":
+
                 HRRN hrrn = new HRRN(conts);
                 hrrn.runScheduler();
-                int res4=funcionAuxiliarEjec(nombreAlgoritmo,conts,listado_id,hrrn.getTornaroundTimeP(),hrrn.getResponseTimeP());
+                int res4 = funcionAuxiliarEjec(nombreAlgoritmo, conts, listado_id, hrrn.getTornaroundTimeP(), hrrn.getResponseTimeP());
                 System.out.println("resultado crearEjecucion: " + res4);
                 return hrrn.getResultado();
 
@@ -147,12 +247,10 @@ public class ControladorEjecucion {
             default:
                 // código a ejecutar si ninguno de los casos anteriores coincide
                 return null;
-            
+
         }
     }
-    
 
-    
     /*public String EjecutarAlgoritmo(String nombreAlgoritmo, int listado_id) throws InterruptedException {
         List<Contenedor1> conts = ordenarContenedores(daoC.DaobtenerConetenedoresListado(listado_id));
         //List<Contenedor3> conts3 = ordenarContenedores3(daoC.DaobtenerConetenedoresListado3(listado_id));
@@ -225,7 +323,6 @@ public class ControladorEjecucion {
         }
         
     }*/
-    
     public static void main(String[] args) {
         ControladorEjecucion cont = new ControladorEjecucion();
         /*try {
@@ -233,8 +330,8 @@ public class ControladorEjecucion {
         } catch (InterruptedException ex) {
             Logger.getLogger(ControladorEjecucion.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        
-        ResultSet res=cont.consultarResultados(2);
+
+ /* ResultSet res=cont.consultarResultados(2);
         
         try {
             while(res.next()){
@@ -246,11 +343,15 @@ public class ControladorEjecucion {
         } catch (SQLException ex) {
             Logger.getLogger(ControladorEjecucion.class.getName()).log(Level.SEVERE, null, ex);
         }
+         */
+        //cont.crearImagen();
+        /*Image imagen=cont.verificarImagen();
+        System.out.println(imagen.getId());
+         */
+       cont.ejecutarDB();
         
-        
-        
-        
-        
+     
+
     }
-    
+
 }
